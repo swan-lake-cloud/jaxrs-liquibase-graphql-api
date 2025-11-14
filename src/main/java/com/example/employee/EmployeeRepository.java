@@ -1,14 +1,13 @@
-// src/main/java/com/example/employee/EmployeeRepository.java
 package com.example.employee;
 
+import com.example.demo.entity.Employee;
+
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 public class EmployeeRepository {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public EmployeeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;

@@ -1,5 +1,6 @@
-// src/main/java/com/example/employee/EmployeeService.java
 package com.example.employee;
+
+import com.example.demo.entity.Employee;
 
 public class EmployeeService {
 
