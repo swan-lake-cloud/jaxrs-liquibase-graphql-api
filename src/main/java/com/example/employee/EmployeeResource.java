@@ -1,6 +1,10 @@
-package com.example.demo;
+package com.example.employee;
 
-import com.example.employee.Employee;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -8,8 +12,12 @@ import javax.persistence.Persistence;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DemoApplication {
-    public static void main(String[] args) {
+@Path("/employees")
+public class EmployeeResource {
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createEmployee(Employee employee) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
         EntityManager em = emf.createEntityManager();
 
@@ -30,5 +38,6 @@ public class DemoApplication {
 
         em.close();
         emf.close();
+        return Response.status(Response.Status.CREATED).entity(employee).build();
     }
 }
