@@ -1,6 +1,6 @@
 package com.example.employee;
 
-import com.example.demo.entity.Employee;
+import com.example.model.Employee;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -11,6 +11,10 @@ public class EmployeeRepository {
 
     public EmployeeRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 
     public List<Employee> findByName(String name) {

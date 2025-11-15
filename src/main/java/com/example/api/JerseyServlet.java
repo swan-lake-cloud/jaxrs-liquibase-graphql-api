@@ -1,4 +1,4 @@
-package com.example.demo.api;
+package com.example.api;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -7,7 +7,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class JerseyServlet extends ServletContainer {
     public JerseyServlet() {
         super(new ResourceConfig()
-                .packages("com.example.demo.api")
+                .packages("com.example.api")
                 .register(JacksonFeature.class)
         );    }
 }
