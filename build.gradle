@@ -1,6 +1,7 @@
 plugins {
     id 'war'
     id 'application'
+    id 'org.liquibase.gradle' version '2.2.0'
 }
 
 application {
@@ -40,6 +41,23 @@ dependencies {
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'jakarta.el:jakarta.el-api:5.0.1'
     implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    implementation 'org.liquibase:liquibase-core:4.24.0'
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.24.0'
+    liquibaseRuntime 'org.postgresql:postgresql:42.7.3'
+    liquibaseRuntime 'info.picocli:picocli:4.7.5'
     runtimeOnly 'org.glassfish.expressly:expressly:5.0.0'
     runtimeOnly 'org.postgresql:postgresql:42.7.3'
+}
+
+liquibase {
+    activities {
+        main {
+            changelogFile 'src/main/resources/db/changelog/db.changelog-master.xml'
+            url 'jdbc:postgresql://localhost:5432/testdb'
+            username 'postgres'
+            password 'password'
+            classpath 'src/main/resources'
+        }
+    }
+    runList = 'main'
 }
