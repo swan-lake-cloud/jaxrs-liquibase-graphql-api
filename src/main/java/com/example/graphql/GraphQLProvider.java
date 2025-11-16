@@ -1,7 +1,7 @@
 package com.example.graphql;
 
-import com.example.graphql.datafetcher.EmployeeMutationDataFetcher;
-import com.example.graphql.datafetcher.EmployeeQueryDataFetcher;
+import com.example.graphql.datafetcher.UserMutationDataFetcher;
+import com.example.graphql.datafetcher.UserQueryDataFetcher;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
@@ -9,20 +9,22 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 
-import java.io.InputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
+import java.util.Objects;
 
 public class GraphQLProvider {
 
     private GraphQL graphQL;
-    private final EmployeeQueryDataFetcher employeeQueryDataFetcher;
-    private final EmployeeMutationDataFetcher employeeMutationDataFetcher;
+    private final UserQueryDataFetcher userQueryDataFetcher;
+    private final UserMutationDataFetcher userMutationDataFetcher;
 
-    public GraphQLProvider(EmployeeQueryDataFetcher employeeQueryDataFetcher,
-                           EmployeeMutationDataFetcher employeeMutationDataFetcher) {
-        this.employeeQueryDataFetcher = employeeQueryDataFetcher;
-        this.employeeMutationDataFetcher = employeeMutationDataFetcher;
+    public GraphQLProvider(UserQueryDataFetcher userQueryDataFetcher,
+                           UserMutationDataFetcher userMutationDataFetcher) {
+        this.userQueryDataFetcher = userQueryDataFetcher;
+        this.userMutationDataFetcher = userMutationDataFetcher;
         init();
     }
 
@@ -40,29 +42,40 @@ public class GraphQLProvider {
 
     private TypeDefinitionRegistry loadSchema() {
         SchemaParser schemaParser = new SchemaParser();
-        InputStream schemaStream = getClass().getClassLoader()
-                .getResourceAsStream("graphql/employee.graphqls");
-        if (schemaStream == null) {
-            throw new RuntimeException("Schema file not found: graphql/employee.graphqls");
+        TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL url = classLoader.getResource("graphql");
+        if (url == null) {
+            throw new RuntimeException("Schema directory not found: graphql");
         }
-        Reader schemaReader = new InputStreamReader(schemaStream);
-        return schemaParser.parse(schemaReader);
+        File schemaDir = new File(url.getFile());
+        File[] schemaFiles = schemaDir.listFiles((dir, name) -> name.endsWith(".graphqls"));
+        if (schemaFiles == null || schemaFiles.length == 0) {
+            throw new RuntimeException("No .graphqls files found in: graphql");
+        }
+
+        for (File file : schemaFiles) {
+            try (Reader reader = new InputStreamReader(Objects.requireNonNull(classLoader.getResourceAsStream("graphql/" + file.getName())))) {
+                typeRegistry.merge(schemaParser.parse(reader));
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to parse schema file: " + file.getName(), e);
+            }
+        }
+        return typeRegistry;
     }
 
     private RuntimeWiring buildWiring() {
         return RuntimeWiring.newRuntimeWiring()
+                .scalar(DateTimeScalar.DATE_TIME) // Register the custom scalar here
                 .type("Query", builder -> builder
-                        .dataFetcher("employee", employeeQueryDataFetcher)
-                        .dataFetcher("employees", employeeQueryDataFetcher))
+                        .dataFetcher("user", userQueryDataFetcher)
+                        .dataFetcher("users", userQueryDataFetcher))
                 .type("Mutation", builder -> builder
-                        .dataFetcher("createEmployee", employeeMutationDataFetcher)
-                        .dataFetcher("updateEmployee", employeeMutationDataFetcher)
-                        .dataFetcher("deleteEmployee", employeeMutationDataFetcher))
+                        .dataFetcher("createUser", userMutationDataFetcher)
+                        .dataFetcher("updateUser", userMutationDataFetcher)
+                        .dataFetcher("deleteUser", userMutationDataFetcher))
                 .build();
-    }
-
-    public GraphQL getGraphQL() {
-        return graphQL;
     }
 
     public GraphQL buildGraphQL() {

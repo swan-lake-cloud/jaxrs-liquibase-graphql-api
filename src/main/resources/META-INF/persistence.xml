@@ -4,7 +4,7 @@
                                  https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
     <persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
-        <class>com.example.model.Employee</class>
+        <class>com.example.model.User</class>
         <properties>
             <!-- ✅ Jakarta properties (pas javax) -->
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/testdb"/>

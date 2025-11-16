@@ -5,6 +5,7 @@ import com.example.context.GraphQLContext;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import com.example.util.JwtResolver;
 
 public class JwtAuthenticationFilter implements Filter {
 
@@ -13,12 +14,11 @@ public class JwtAuthenticationFilter implements Filter {
             throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String authHeader = httpRequest.getHeader("Authorization");
+        String token = JwtResolver.resolveToken(httpRequest);
 
         GraphQLContext context;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+        if (token != null) {
             try {
                 String username = JwtUtil.validateToken(token);
                 context = GraphQLContext.authenticated(username);

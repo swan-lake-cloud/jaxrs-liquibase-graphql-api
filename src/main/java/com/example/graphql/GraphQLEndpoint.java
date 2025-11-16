@@ -1,9 +1,9 @@
 package com.example.graphql;
 
-import com.example.employee.EmployeeRepository;
-import com.example.graphql.datafetcher.EmployeeMutationDataFetcher;
-import com.example.graphql.datafetcher.EmployeeQueryDataFetcher;
-import com.example.service.EmployeeService;
+import com.example.user.UserRepository;
+import com.example.graphql.datafetcher.UserMutationDataFetcher;
+import com.example.graphql.datafetcher.UserQueryDataFetcher;
+import com.example.service.UserService;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -22,11 +22,11 @@ public class GraphQLEndpoint {
     private final GraphQL graphQL;
 
     public GraphQLEndpoint() {
-        EmployeeRepository employeeRepository = new EmployeeRepository();
-        EmployeeService employeeService = new EmployeeService(employeeRepository); // Créer le service
+        UserRepository userRepository = new UserRepository();
+        UserService userService = new UserService(userRepository); // Créer le service
 
-        EmployeeQueryDataFetcher queryDataFetcher = new EmployeeQueryDataFetcher(employeeService);
-        EmployeeMutationDataFetcher mutationDataFetcher = new EmployeeMutationDataFetcher(employeeService);
+        UserQueryDataFetcher queryDataFetcher = new UserQueryDataFetcher(userService);
+        UserMutationDataFetcher mutationDataFetcher = new UserMutationDataFetcher(userService);
 
         GraphQLProvider provider = new GraphQLProvider(queryDataFetcher, mutationDataFetcher);
         this.graphQL = provider.buildGraphQL();
