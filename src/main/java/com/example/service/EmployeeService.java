@@ -2,8 +2,11 @@ package com.example.service;
 
 import com.example.employee.EmployeeRepository;
 import com.example.model.Employee;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import com.example.util.JpaUtil;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+
 import java.util.List;
 
 public class EmployeeService {
@@ -23,7 +26,7 @@ public class EmployeeService {
     }
 
     public Employee addEmployee(Employee employee) {
-        EntityManager em = employeeRepository.getEntityManager();
+        EntityManager em = JpaUtil.getEntityManager();
         EntityTransaction transaction = em.getTransaction();
 
         try {
@@ -44,7 +47,7 @@ public class EmployeeService {
     }
 
     public Employee updateEmployee(Long id, String name, String role) {
-        EntityManager em = employeeRepository.getEntityManager();
+        EntityManager em = JpaUtil.getEntityManager();
         EntityTransaction transaction = em.getTransaction();
 
         try {
@@ -69,7 +72,7 @@ public class EmployeeService {
     }
 
     public boolean deleteEmployee(Long id) {
-        EntityManager em = employeeRepository.getEntityManager();
+        EntityManager em = JpaUtil.getEntityManager();
         EntityTransaction transaction = em.getTransaction();
 
         try {

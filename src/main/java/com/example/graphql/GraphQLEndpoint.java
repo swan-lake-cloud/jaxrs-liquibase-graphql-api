@@ -14,7 +14,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.Map;
 
@@ -23,10 +22,7 @@ public class GraphQLEndpoint {
     private final GraphQL graphQL;
 
     public GraphQLEndpoint() {
-        EntityManager entityManager = javax.persistence.Persistence
-                .createEntityManagerFactory("default")
-                .createEntityManager();
-        EmployeeRepository employeeRepository = new EmployeeRepository(entityManager);
+        EmployeeRepository employeeRepository = new EmployeeRepository();
         EmployeeService employeeService = new EmployeeService(employeeRepository); // Créer le service
 
         EmployeeQueryDataFetcher queryDataFetcher = new EmployeeQueryDataFetcher(employeeService);
