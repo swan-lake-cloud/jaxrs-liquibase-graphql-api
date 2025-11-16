@@ -4,6 +4,7 @@ import com.example.model.User;
 import com.example.service.UserService;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Map;
 
@@ -22,7 +23,9 @@ public class UserMutationDataFetcher implements DataFetcher<User> {
         String lastName = (String) input.get("lastName");
         String email = (String) input.get("email");
         String username = (String) input.get("username");
-        String passwordHash = (String) input.get("passwordHash");
+        String password = (String) input.get("passwordHash");
+        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+
 
         return userService.createUser(firstName, lastName, email, username, passwordHash);
     }

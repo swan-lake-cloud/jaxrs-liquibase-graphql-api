@@ -12,6 +12,7 @@ import java.util.Properties;
 
 public class JwtUtil {
     private static final String SECRET;
+    private static final long EXPIRATION;
     private static final Key KEY;
 
     static {
@@ -22,6 +23,7 @@ public class JwtUtil {
             throw new RuntimeException("Could not load application-local.properties", e);
         }
         SECRET = props.getProperty("jwt.secret");
+        EXPIRATION = Long.parseLong(props.getProperty("jwt.expiration"));
         KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
@@ -29,7 +31,7 @@ public class JwtUtil {
         return Jwts.builder()
             .setSubject(username)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24h
+            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
             .signWith(KEY, SignatureAlgorithm.HS512)
             .compact();
     }
