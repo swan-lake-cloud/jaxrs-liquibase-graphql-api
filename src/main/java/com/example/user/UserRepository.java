@@ -44,4 +44,18 @@ public class UserRepository {
             em.close();
         }
     }
+
+    public User findByUsernameOrEmail(String identifier) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT u FROM User u WHERE u.username = :identifier OR u.email = :identifier", User.class)
+                .setParameter("identifier", identifier)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        } finally {
+            em.close();
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.example.graphql;
 
 import com.example.graphql.datafetcher.UserMutationDataFetcher;
 import com.example.graphql.datafetcher.UserQueryDataFetcher;
+import com.example.graphql.resolver.UserMutationResolver;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
@@ -20,6 +21,7 @@ public class GraphQLProvider {
     private GraphQL graphQL;
     private final UserQueryDataFetcher userQueryDataFetcher;
     private final UserMutationDataFetcher userMutationDataFetcher;
+    private final UserMutationResolver userMutationResolver = new UserMutationResolver();
 
     public GraphQLProvider(UserQueryDataFetcher userQueryDataFetcher,
                            UserMutationDataFetcher userMutationDataFetcher) {
@@ -74,7 +76,12 @@ public class GraphQLProvider {
                 .type("Mutation", builder -> builder
                         .dataFetcher("createUser", userMutationDataFetcher)
                         .dataFetcher("updateUser", userMutationDataFetcher)
-                        .dataFetcher("deleteUser", userMutationDataFetcher))
+                        .dataFetcher("deleteUser", userMutationDataFetcher)
+                        .dataFetcher("login", env -> {
+                            String identifier = env.getArgument("identifier");
+                            String password = env.getArgument("password");
+                            return userMutationResolver.login(identifier, password);
+                        }))
                 .build();
     }
 

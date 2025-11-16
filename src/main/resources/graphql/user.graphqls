@@ -19,6 +19,7 @@ input UserInput {
 
 type Mutation {
     createUser(input: UserInput!): User!
+    login(identifier: String!, password: String!): String!
 }
 
 type Query {
