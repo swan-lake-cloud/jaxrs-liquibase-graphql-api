@@ -1,14 +1,13 @@
-type User {
-    id: ID!
-    firstName: String!
-    lastName: String!
-    email: String!
-    username: String!
-    passwordHash: String!
+type Mutation {
+    createUser(input: UserInput!): User!
+    login(identifier: String!, password: String!): AuthPayload!
+    logout(token: String!): String!
 }
 
-scalar DateTime
-
+type Query {
+    user(id: ID!): User
+    users: [User!]!
+}
 input UserInput {
     firstName: String!
     lastName: String!
@@ -17,23 +16,16 @@ input UserInput {
     passwordHash: String!
 }
 
-input LoginInput {
-    identifier: String!
-    password: String!
-}
-
 type AuthPayload {
     token: String!
     user: User!
 }
 
-type Mutation {
-    createUser(input: UserInput!): User!
-    login(input: LoginInput!): AuthPayload!
-    logout(token: String!): String!
-}
-
-type Query {
-    user(id: ID!): User
-    users: [User!]!
+type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    username: String!
+    passwordHash: String!
 }
