@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
 
 public class GraphQLProvider {
@@ -77,9 +78,10 @@ public class GraphQLProvider {
                         .dataFetcher("createUser", userMutationDataFetcher)
                         .dataFetcher("updateUser", userMutationDataFetcher)
                         .dataFetcher("deleteUser", userMutationDataFetcher)
-                        .dataFetcher("login", env -> {
-                            String identifier = env.getArgument("identifier");
-                            String password = env.getArgument("password");
+                        .dataFetcher("login", environment -> {
+                            Map<String, Object> input = environment.getArgument("input");
+                            String identifier = (String) input.get("identifier");
+                            String password = (String) input.get("password");
                             return userMutationResolver.login(identifier, password);
                         })
                         .dataFetcher("logout", env -> userMutationResolver.logout(env.getArgument("token"))))

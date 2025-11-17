@@ -5,6 +5,7 @@ import com.example.user.UserRepository;
 import com.example.util.JwtUtil;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class UserMutationResolver {
@@ -19,12 +20,16 @@ public class UserMutationResolver {
         );
     }
 
-    public String login(String identifier, String password) {
+    public Map<String, Object> login(String identifier, String password) {
         User user = this.userRepository.findByUsernameOrEmail(identifier);
         if (user == null || !BCrypt.checkpw(password, user.getPasswordHash())) {
             throw new RuntimeException("Invalid credentials");
         }
-        return JwtUtil.generateToken(user.getUsername());
+
+        return Map.of(
+                "token", JwtUtil.generateToken(user.getUsername()),
+                "user", user
+        );
     }
 
     public String logout(String token) {

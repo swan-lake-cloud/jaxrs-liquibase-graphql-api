@@ -11,6 +11,7 @@ public class JerseyServlet extends ServletContainer {
                 .packages("com.example.api")
                 .register(JacksonFeature.class)
                 .register(JwtAuthenticationFilter.class) // Register the JWT filter
+                .property("jersey.config.server.wadl.disableWadl", "true")
         );
     }
 }

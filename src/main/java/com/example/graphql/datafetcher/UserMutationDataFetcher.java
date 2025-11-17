@@ -26,7 +26,6 @@ public class UserMutationDataFetcher implements DataFetcher<User> {
         String password = (String) input.get("passwordHash");
         String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
 
-
         return userService.createUser(firstName, lastName, email, username, passwordHash);
     }
 }
