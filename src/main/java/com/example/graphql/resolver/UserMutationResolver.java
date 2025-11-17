@@ -5,11 +5,18 @@ import com.example.user.UserRepository;
 import com.example.util.JwtUtil;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.concurrent.*;
+
 public class UserMutationResolver {
     private final UserRepository userRepository = new UserRepository();
+    private static final ConcurrentMap<String, Long> blacklistedTokens = new ConcurrentHashMap<>();
 
-    public UserMutationResolver() {
-
+    static {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(
+                UserMutationResolver::purgeExpiredTokens,
+                1, 1, TimeUnit.DAYS
+        );
     }
 
     public String login(String identifier, String password) {
@@ -18,5 +25,20 @@ public class UserMutationResolver {
             throw new RuntimeException("Invalid credentials");
         }
         return JwtUtil.generateToken(user.getUsername());
+    }
+
+    public String logout(String token) {
+        long expiration = JwtUtil.getExpiration(token);
+        blacklistedTokens.put(token, expiration);
+        return "Logged out successfully";
+    }
+
+    public boolean isTokenBlacklisted(String token) {
+        return blacklistedTokens.containsKey(token);
+    }
+
+    private static void purgeExpiredTokens() {
+        long now = System.currentTimeMillis();
+        blacklistedTokens.entrySet().removeIf(entry -> entry.getValue() < now);
     }
 }

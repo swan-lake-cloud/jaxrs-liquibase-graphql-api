@@ -81,7 +81,8 @@ public class GraphQLProvider {
                             String identifier = env.getArgument("identifier");
                             String password = env.getArgument("password");
                             return userMutationResolver.login(identifier, password);
-                        }))
+                        })
+                        .dataFetcher("logout", env -> userMutationResolver.logout(env.getArgument("token"))))
                 .build();
     }
 

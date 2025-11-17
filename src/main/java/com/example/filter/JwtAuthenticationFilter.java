@@ -1,5 +1,6 @@
 package com.example.filter;
 
+import com.example.graphql.resolver.UserMutationResolver;
 import com.example.util.JwtUtil;
 import com.example.context.GraphQLContext;
 import jakarta.servlet.*;
@@ -8,6 +9,8 @@ import java.io.IOException;
 import com.example.util.JwtResolver;
 
 public class JwtAuthenticationFilter implements Filter {
+
+    private final UserMutationResolver userMutationResolver = new UserMutationResolver();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -19,11 +22,15 @@ public class JwtAuthenticationFilter implements Filter {
         GraphQLContext context;
 
         if (token != null) {
-            try {
-                String username = JwtUtil.validateToken(token);
-                context = GraphQLContext.authenticated(username);
-            } catch (Exception e) {
+            if (userMutationResolver.isTokenBlacklisted(token)) {
                 context = GraphQLContext.unauthenticated();
+            } else {
+                try {
+                    String username = JwtUtil.validateToken(token);
+                    context = GraphQLContext.authenticated(username);
+                } catch (Exception e) {
+                    context = GraphQLContext.unauthenticated();
+                }
             }
         } else {
             context = GraphQLContext.unauthenticated();
