@@ -1,13 +1,14 @@
 type Mutation {
     createUser(input: UserInput!): User!
     login(identifier: String!, password: String!): AuthPayload!
-    logout(token: String!): Boolean!
+    logout(token: String!): LogoutResponse!
 }
 
 type Query {
     user(id: ID!): User
     users: [User!]!
 }
+
 input UserInput {
     firstName: String!
     lastName: String!
@@ -19,6 +20,11 @@ input UserInput {
 type AuthPayload {
     token: String!
     user: User!
+}
+
+type LogoutResponse {
+    success: Boolean!
+    message: String!
 }
 
 type User {
