@@ -1,7 +1,7 @@
 type Mutation {
     createUser(input: UserInput!): User!
     login(identifier: String!, password: String!): AuthPayload!
-    logout(token: String!): String!
+    logout(token: String!): Boolean!
 }
 
 type Query {

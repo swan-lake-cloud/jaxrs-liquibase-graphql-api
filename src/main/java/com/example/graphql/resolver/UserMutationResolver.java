@@ -32,12 +32,16 @@ public class UserMutationResolver {
         );
     }
 
-    public String logout(String token) {
-        long expiration = JwtUtil.getExpiration(token);
-        blacklistedTokens.put(token, expiration);
-        return "Logged out successfully";
+    public Boolean logout(String token) {
+        try {
+            long expiration = JwtUtil.getExpiration(token);
+            blacklistedTokens.put(token, expiration);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
-
+    
     public boolean isTokenBlacklisted(String token) {
         return blacklistedTokens.containsKey(token);
     }
