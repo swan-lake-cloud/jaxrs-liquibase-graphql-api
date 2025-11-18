@@ -1,4 +1,4 @@
-package com.example.graphql.resolver;
+package com.example.dto;
 
 public class LogoutResponse {
     private boolean success;

@@ -1,6 +1,6 @@
 package com.example.graphql.datafetcher;
 
-import com.example.model.User;
+import com.example.dto.CreateUserResponse;
 import com.example.service.UserService;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
@@ -8,7 +8,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Map;
 
-public class UserMutationDataFetcher implements DataFetcher<User> {
+public class UserMutationDataFetcher implements DataFetcher<CreateUserResponse> {
 
     private final UserService userService;
 
@@ -17,15 +17,13 @@ public class UserMutationDataFetcher implements DataFetcher<User> {
     }
 
     @Override
-    public User get(DataFetchingEnvironment environment) {
+    public CreateUserResponse get(DataFetchingEnvironment environment) {
         Map<String, Object> input = environment.getArgument("input");
         String firstName = (String) input.get("firstName");
         String lastName = (String) input.get("lastName");
         String email = (String) input.get("email");
         String username = (String) input.get("username");
-        String password = (String) input.get("passwordHash");
-        String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
-
+        String passwordHash = BCrypt.hashpw((String) input.get("password"), BCrypt.gensalt());
         return userService.createUser(firstName, lastName, email, username, passwordHash);
     }
 }

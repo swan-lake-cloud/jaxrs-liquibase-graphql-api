@@ -1,5 +1,6 @@
 package com.example.graphql.resolver;
 
+import com.example.dto.LogoutResponse;
 import com.example.model.User;
 import com.example.user.UserRepository;
 import com.example.util.JwtUtil;

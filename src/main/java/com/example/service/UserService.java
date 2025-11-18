@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.dto.CreateUserResponse;
 import com.example.model.User;
 import com.example.user.UserRepository;
 import com.example.util.JpaUtil;
@@ -17,14 +18,21 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(String firstName, String lastName, String email, String username, String passwordHash) {
+    public CreateUserResponse createUser(String firstName, String lastName, String email, String username, String passwordHash) {
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
         user.setUsername(username);
         user.setPasswordHash(passwordHash);
-        return addUser(user);
+        User savedUser = addUser(user);
+
+        return new CreateUserResponse(
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                savedUser.getEmail(),
+                savedUser.getUsername()
+        );
     }
 
     public User addUser(User user) {
